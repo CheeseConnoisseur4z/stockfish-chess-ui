@@ -1,0 +1,120 @@
+@startuml
+
+class Main {
+    + void main()
+}
+
+class Stockfish {
+    - Process process
+    - BufferReader reader
+    - OutputStreamWriter writer
+    - String PATH
+
+    + void startProcess()
+    + void sendCommand()
+    + String getBestMove()
+}
+
+class Game {
+    - Stockfish stockfish
+    - Board board
+    - int player
+    - int fishThinkingTime
+
+    + void start()
+    - void readyGraphics()
+    + void makeMove()
+    - void turnChange()
+    + void theFishMakesAMove()
+    - void matchOver()
+}
+
+class Board {
+    - Figure[][] board
+    - King king
+    - ArrayList<Figure> normalFiguresInPlay
+    - ArrayList<Figure> blackFiguresInPlay
+
+    + void callMoveGeneration()
+    + void validateMoves()
+    - void removeInvalidMoves()
+    + boolean checkCheck()
+    - boolean isKingAttackedBy()
+    + void moveFigure()
+    + String getFen()
+}
+
+abstract class Figure {
+    - ArrayList<int> moves
+    - int[] position
+    + Enum ID
+    - int player
+    - int movedTimes
+
+    + Figure()
+    + abstract generateMoves()
+}
+
+class FigureMovement {
+    + ArrayList<int[]> patternMove()
+    + ArrayList<int> enPasant()
+    + int[] pawnMove()
+    + ArrayList<int[]> pawnEatMove()
+}
+
+class FigureControls {
+    - Board board
+    - Game game
+    - JPanel[][] moveOverlay
+    - int mouseX
+    - int mouseY
+
+    + FigureControls()
+    + void onDragMoveStart()
+    + void dragMove()
+    + void onDragMoveEnd()
+    - void lightMoveOverlay()
+}
+
+class Graphics {
+    + JFrame frame
+    + JPanel[][] tileDisplay
+    + JPanel[][] moveOverlay
+    + HashMap<Figure, JLabel> figureJLabelHashMap
+
+    + void createFigureDisplay()
+    + addMoveOverlayToFrame()
+}
+
+enum Enum {
+    PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING
+}
+
+class King extends Figure {}
+class Queen extends Figure {}
+class Pawn extends Figure {}
+class Knight extends Figure {}
+class Rook extends Figure {}
+class Bishop extends Figure {}
+
+FigureControls --> Game
+FigureControls <-left- Board
+FigureControls --> Graphics
+
+Game --> Graphics
+Game --> Board
+Game <--> Stockfish
+
+Board <-- Figure
+Board --> FigureMovement
+
+Figure --> FigureMovement
+Figure -left-> Enum
+
+Board --> Enum
+
+
+Main --> Game
+
+
+@enduml
